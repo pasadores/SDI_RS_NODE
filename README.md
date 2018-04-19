@@ -4,8 +4,8 @@ Entrega para la práctica obligatoria de SDI de la parte de Node.
 
 ## Authors
 
-* Daniel González García UO224371
-* Pablo Amorín Triana UO237060
+* [Daniel González García](https://github.com/danigg) UO224371
+* [Pablo Amorín Triana](https://github.com/pasadores) UO237060
 
 ## Database Info
 
