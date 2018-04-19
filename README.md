@@ -1,5 +1,7 @@
 # SDI_RS_NODE
 
+Entrega para la práctica obligatoria de SDI de la parte de Node.
+
 ## Authors
 
 * Daniel González García UO224371
