@@ -42,7 +42,38 @@ module.exports = function(app, swig, gestorBD) {
 
 
     });
+    app.get("/usuarios", function(req, res) {
+        var criterio = {}; // criterio por defecto (lista todas las canciones)
 
+        if( req.query.busqueda != null ){ // si ha llegado algo a través del buscador...
+            // {$regex : ".*"+req.query.busqueda+".*"} -> cualquier cadena antes y/o después de lo que buscamos
+            criterio = { "nombre" : {$regex : ".*"+req.query.busqueda+".*"} };
+        }
+
+        var pg = parseInt(req.query.pg); // Es String !!!
+        if ( req.query.pg == null){ // Puede no venir el param
+            pg = 1;
+        }
+
+        gestorBD.obtenerUsuariosPg( criterio, pg, function(usuarios, total) {
+            if (usuarios == null) {
+                res.send("Error al listar ");
+            } else {
+                var pgUltima = total/4;
+                if (total % 4 > 0 ){ // Sobran decimales
+                    pgUltima = pgUltima+1;
+                }
+
+                var respuesta = swig.renderFile('views/blistar.html',
+                    {
+                        usuarios: usuarios,
+                        pgActual : pg,
+                        pgUltima : pgUltima
+                    });
+                res.send(respuesta);
+            }
+        });
+    });
     app.get("/identificarse", function(req, res) {
         var respuesta = swig.renderFile('views/bidentificacion.html', {});
         res.send(respuesta);
