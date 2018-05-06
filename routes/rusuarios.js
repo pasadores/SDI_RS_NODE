@@ -59,13 +59,14 @@ module.exports = function(app, swig, gestorBD) {
             if (usuarios == null) {
                 res.send("Error al listar ");
             } else {
-                var pgUltima = total/4;
-                if (total % 4 > 0 ){ // Sobran decimales
+                var pgUltima = total/5;
+                if (total % 5 > 0 ){ // Sobran decimales
                     pgUltima = pgUltima+1;
                 }
 
                 var respuesta = swig.renderFile('views/blistar.html',
                     {
+                        loged : true,
                         usuarios: usuarios,
                         pgActual : pg,
                         pgUltima : pgUltima
@@ -94,7 +95,7 @@ module.exports = function(app, swig, gestorBD) {
                     "&tipoMensaje=alert-danger ");
             } else {
                 req.session.usuario = usuarios[0].email;
-                res.send("identificado");
+                res.redirect("/usuarios");
             }
         });
     });

@@ -9,6 +9,20 @@ app.use(expressSession({
     saveUninitialized: true
 }));
 
+var routerUsuarioSession = express.Router();
+routerUsuarioSession.use(function (req, res, next) {
+    console.log("routerUsuarioSession");
+    if (req.session.usuario) {
+        // dejamos correr la petición, porque el usuario está autenticado
+
+        next();
+    } else {
+        console.log("va a : " + req.session.destination);
+        res.redirect("/identificarse");
+    }
+});
+app.use("/usuarios", routerUsuarioSession);
+
 var crypto = require('crypto');
 
 var mongo = require('mongodb');
@@ -23,7 +37,7 @@ gestorBD.init(app,mongo);
 app.use(express.static('public'));
 
 app.set('port', 8081);
-app.set('db','mongodb://admin:sdi@ds131989.mlab.com:31989/tiendamusica');
+app.set('db','mongodb://admin:sdi@ds247499.mlab.com:47499/redsocial_sdi');
 app.set('clave','abcdefg');
 app.set('crypto',crypto);
 

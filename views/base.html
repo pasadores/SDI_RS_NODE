@@ -24,7 +24,9 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav">
-
+                {% if loged %}
+                <li id="mUsuarios" class="active"><a href="/usuarios">Usuarios</a></li>
+                {% endif %}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="/registrarse"><span
