@@ -22,7 +22,7 @@ routerUsuarioSession.use(function (req, res, next) {
     }
 });
 app.use("/usuarios", routerUsuarioSession);
-
+app.use("/peticion/*", routerUsuarioSession);
 var crypto = require('crypto');
 
 var mongo = require('mongodb');

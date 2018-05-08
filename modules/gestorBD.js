@@ -69,7 +69,7 @@ module.exports = {
                     if (err) {
                         funcionCallback(null);
                     } else {
-                        funcionCallback(usuarios);
+                        funcionCallback(peticiones);
                     }
                     db.close();
                 });
