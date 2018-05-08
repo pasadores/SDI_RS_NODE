@@ -33,6 +33,7 @@
         <tr>
             <td>{{usuario.nombre}}</td>
             <td>{{usuario.email}}</td>
+            <td> <a href="/peticion/add/" + {{usuario.id}}>Enviar petición</a> </td>
         </tr>
         {% endfor %}
         </tbody>

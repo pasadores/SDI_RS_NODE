@@ -42,6 +42,9 @@ app.set('clave','abcdefg');
 app.set('crypto',crypto);
 
 require("./routes/rusuarios.js")(app,swig, gestorBD);
+require("./routes/rpeticiones.js")(app,swig,gestorBD);
+require("./routes/ramistades.js")(app,swig,gestorBD);
+
 
 app.get('/', function (req, res) {
     res.redirect('/identificarse');

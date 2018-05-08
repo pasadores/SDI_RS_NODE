@@ -23,6 +23,25 @@ module.exports = {
         });
     },
 
+    insertarPerticion: function (peticion, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
+            if(err){
+                funcionCallback(null);
+            } else {
+                var collection = db.collection('peticiones');
+                collection.insert(peticion,function (err,result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+
+        });
+    },
+
     obtenerUsuarios : function(criterio,funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
@@ -40,6 +59,25 @@ module.exports = {
             }
         });
     },
+    obtenerPeticiones : function(criterio, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
+            if (err) {
+                funcionCallback(null)
+            } else {
+                var collection = db.collection('peticiones');
+                collection.find(criterio).toArray(function(err, peticiones) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(usuarios);
+                    }
+                    db.close();
+                });
+            }
+
+        });
+    },
+
     obtenerUsuariosPg : function(criterio, pg, funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
@@ -60,5 +98,7 @@ module.exports = {
             }
         });
     }
+
+
 
 };
