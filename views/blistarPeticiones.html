@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block titulo %} Listado de usuarios {% endblock %}
+
+{% block contenido_principal %}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Emisor</th>
+            <th>Receptor</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for peticion in peticiones %}
+        <tr>
+            <td>{{peticion.emisor}}</td>
+            <td>{{peticion.receptor}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

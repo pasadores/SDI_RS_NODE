@@ -11,10 +11,10 @@ module.exports = function(app, swig, gestorBD) {
                 _id : gestorBD.mongo.ObjectID(usuario._id)
             }
             gestorBD.obtenerPeticiones(criterio, function(peticiones) {
-                if(peticiones == null){
+                if(peticiones == null || peticiones.length == 0){
                     var peticion = {
-                        idEmisor : req.session.id,
-                        idReceptor : req.query.id
+                        emisor : req.session.usuario,
+                        receptor : usuario.email
                     }
                     gestorBD.insertarPerticion(peticion, function(id) {
                         if (id == null){
@@ -27,6 +27,23 @@ module.exports = function(app, swig, gestorBD) {
                     res.redirect("/usuarios?mensaje= La petición ya existe");
                 }
             });
+
+        });
+    });
+
+    app.get("/peticionesRecibidas", function (req, res){
+        var criterio = {
+            receptor: req.session.usuario
+        };
+        gestorBD.obtenerPeticiones(criterio, function (peticiones) {
+            if (peticiones == null) {
+                res.send("Error al listar las peticiones")
+            } else {
+                var respuesta = swig.renderFile("views/blistarPeticiones.html", {
+                    peticiones: peticiones
+                });
+                res.send(respuesta);
+            }
 
         });
     });
