@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block titulo %} Listado de usuarios {% endblock %}
+{% block titulo %} Listado de peticiones {% endblock %}
 
 {% block contenido_principal %}
 
@@ -17,6 +17,7 @@
         <tr>
             <td>{{peticion.emisor}}</td>
             <td>{{peticion.receptor}}</td>
+            <td><a href={{'/peticion/confirm/' + peticion.emisor}}>Confirmar la petición de amistad</a></td>
         </tr>
         {% endfor %}
         </tbody>

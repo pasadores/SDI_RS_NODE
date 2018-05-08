@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block titulo %} Listado de amistades {% endblock %}
+
+{% block contenido_principal %}
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Origen</th>
+            <th>Destino</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for amistad in amistades %}
+        <tr>
+            <td>{{amistad.origen}}</td>
+            <td>{{amistad.destino}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

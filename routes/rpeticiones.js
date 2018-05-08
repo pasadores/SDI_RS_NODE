@@ -5,7 +5,7 @@ module.exports = function(app, swig, gestorBD) {
             email : req.params.email
         }
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
-            console.log(usuarios);
+            //console.log(usuarios);
             var usuario = usuarios[0];
             criterio = {
                 _id : gestorBD.mongo.ObjectID(usuario._id)

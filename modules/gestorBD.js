@@ -42,6 +42,24 @@ module.exports = {
         });
     },
 
+    insertarAmistad: function (amistad, funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
+            if(err){
+                funcionCallback(null);
+            } else {
+                var collection = db.collection('amistades');
+                collection.insert(amistad,function (err,result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+
     obtenerUsuarios : function(criterio,funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'), function(err, db) {
             if (err) {
@@ -70,6 +88,25 @@ module.exports = {
                         funcionCallback(null);
                     } else {
                         funcionCallback(peticiones);
+                    }
+                    db.close();
+                });
+            }
+
+        });
+    },
+
+    obtenerAmistades : function(criterio, funcionCallback){
+        this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
+            if (err) {
+                funcionCallback(null)
+            } else {
+                var collection = db.collection('amistades');
+                collection.find(criterio).toArray(function(err, amistades) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(amistades);
                     }
                     db.close();
                 });
