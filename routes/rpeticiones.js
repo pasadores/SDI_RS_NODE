@@ -8,7 +8,8 @@ module.exports = function(app, swig, gestorBD) {
             //console.log(usuarios);
             var usuario = usuarios[0];
             criterio = {
-                _id : gestorBD.mongo.ObjectID(usuario._id)
+                emisor: req.session.usuario,
+                receptor: usuario.email
             }
             gestorBD.obtenerPeticiones(criterio, function(peticiones) {
                 if(peticiones == null || peticiones.length == 0){
