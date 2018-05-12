@@ -66,7 +66,7 @@ module.exports = {
                 funcionCallback(null);
             } else {
                 var collection = db.collection('usuarios');
-                collection.find(criterio).toArray(function(err, usuarios) {
+                collection.find(criterio, { nombre : 1 , email : 1}).toArray(function(err, usuarios) {
                     if (err) {
                         funcionCallback(null);
                     } else {
@@ -133,6 +133,72 @@ module.exports = {
                         });
                 });
             }
+        });
+    },
+    insertMensaje : function(mensaje, funcionCallback){
+        this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
+            if(err){
+                funcionCallback(null);
+            } else {
+                var collection = db.collection('mensajes');
+                collection.insert(mensaje,function (err,result) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        funcionCallback(result.ops[0]._id);
+                    }
+                    db.close();
+                });
+            }
+        });
+    },
+    obtenerMensajes : function(criterio, funcionCallback){
+        this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
+            if (err) {
+                funcionCallback(null)
+            } else {
+                var collection = db.collection('mensajes');
+                var messages = new Array();
+                collection.find(criterio).toArray(function(err, mensajes) {
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        mensajes.forEach(function(mensaje){
+                            messages.push(mensaje);
+                        });
+                        var criterio2 = {
+                            emisor : criterio.receptor,
+                            receptor : criterio.emisor
+                        }
+                        collection.find(criterio2).toArray(function(err, mensajes) {
+                            if (err) {
+                                funcionCallback(null);
+                            } else {
+                                mensajes.forEach(function(mensaje) {
+                                    messages.push(mensaje)});
+                                funcionCallback(messages);
+                            }
+                        });
+
+                    }
+                    db.close();
+                });
+            }
+
+        });
+    },
+    limpiarColecciones : function (funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
+            if (err) funcionCallback(null);
+            var collection = db.collection('mensajes');
+            collection.removeMany({});
+            collection = db.collection('usuarios');
+            collection.removeMany({});
+            collection = db.collection('peticiones');
+            collection.removeMany({});
+            collection = db.collection('amistades');
+            collection.removeMany({});
+            funcionCallback("success");
         });
     }
 

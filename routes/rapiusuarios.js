@@ -16,30 +16,46 @@ module.exports = function (app, gestorBD) {
             }
         });
     });
-    app.get("/api/amigo/", function (req, res){
-        var criterio = {
-            origen: res.usuario,
-        };
-        gestorBD.obtenerAmistades(criterio, function (amistades) {
+    app.get("/api/usuarios", function (req, res){
+        if(req.query.filter == "friends"){
+            var criterio = {
+                "origen.email": res.usuario,
+            };
+            gestorBD.obtenerAmistades(criterio, function (amistades) {
 
-            if (amistades == null || amistades.length == 0) {
-                var criterio = {
-                    destino : res.usuario
-                };
-                gestorBD.obtenerAmistades(criterio, function (amistades) {
-                    if (amistades == null || amistades.length == 0) {
-                        res.status(404);
-                        res.json({error : "Error al listar las amistades o no tiene amigos"});
-                    } else {
-                        res.status(200);
-                        res.json({amistades : amistades});
-                    }
-                });
-            } else {
-                res.status(200);
-                res.json({amistades : amistades});
-            }
-        });
+                if (amistades == null || amistades.length == 0) {
+                    var criterio = {
+                        "destino.email" : res.usuario
+                    };
+                    gestorBD.obtenerAmistades(criterio, function (amistades) {
+                        if (amistades == null || amistades.length == 0) {
+                            res.status(404);
+                            res.json({error : "Error al listar las amistades o no tiene amigos"});
+                        } else {
+                            res.status(200);
+                            res.json({amistades : amistades});
+                        }
+                    });
+                } else {
+                    res.status(200);
+                    res.json({amistades : amistades});
+                }
+            });
+        }
+        else{
+            gestorBD.obtenerUsuarios(criterio, function (usuarios) {
+                if (usuarios == null || usuarios.length == 0) {
+                    res.status(404);
+                    res.json({users: "not found"});
+                } else {
+
+                    res.status(200);
+                    res.json({users: usuarios});
+                }
+            });
+        }
+
 
     });
+
 };

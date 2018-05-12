@@ -2,6 +2,9 @@
 var express = require('express');
 var app = express();
 
+var rest = require('request');
+app.set('rest',rest);
+
 var expressSession = require('express-session');
 app.use(expressSession({
     secret: 'abcdefg',
@@ -9,7 +12,7 @@ app.use(expressSession({
     saveUninitialized: true
 }));
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Credentials", "true");
     res.header("Access-Control-Allow-Methods", "POST, GET, DELETE, UPDATE, PUT");
@@ -37,18 +40,16 @@ app.use("/usuarios", routerUsuarioSession);
 app.use("/peticion/*", routerUsuarioSession);
 
 
-
-
 var crypto = require('crypto');
 
 var mongo = require('mongodb');
 var swig = require('swig');
 var bodyParser = require('body-parser');
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended: true}));
 
 var gestorBD = require("./modules/gestorBD.js");
-gestorBD.init(app,mongo);
+gestorBD.init(app, mongo);
 
 var routerUsuarioToken = express.Router();
 routerUsuarioToken.use(function (req, res, next) { // obtener el token, puede ser un parámetro GET , POST o HEADER
@@ -71,21 +72,21 @@ routerUsuarioToken.use(function (req, res, next) { // obtener el token, puede se
     }
 });
 
-app.use('/api/amigo', routerUsuarioToken);
-
+app.use('/api/usuarios', routerUsuarioToken);
+app.use('/api/mensajes', routerUsuarioToken);
 
 app.use(express.static('public'));
 
 app.set('port', 8081);
-app.set('db','mongodb://admin:sdi@ds247499.mlab.com:47499/redsocial_sdi');
-app.set('clave','abcdefg');
-app.set('crypto',crypto);
+app.set('db', 'mongodb://admin:sdi@ds247499.mlab.com:47499/redsocial_sdi');
+app.set('clave', 'abcdefg');
+app.set('crypto', crypto);
 
-require("./routes/rusuarios.js")(app,swig, gestorBD);
-require("./routes/rpeticiones.js")(app,swig,gestorBD);
-require("./routes/ramistades.js")(app,swig,gestorBD);
-require("./routes/rapiusuarios.js")(app,gestorBD);
-
+require("./routes/rusuarios.js")(app, swig, gestorBD);
+require("./routes/rpeticiones.js")(app, swig, gestorBD);
+require("./routes/ramistades.js")(app, swig, gestorBD);
+require("./routes/rapiusuarios.js")(app, gestorBD);
+require("./routes/rapimensajes.js")(app, gestorBD);
 
 app.use(function (err, req, res, next) {
     console.log("Error producido: " + err); // Creamos mensaje de log
@@ -94,12 +95,25 @@ app.use(function (err, req, res, next) {
         res.send("Recurso no disponible");
     }
 });
+app.get('/cleanCollections', function (req, res) {
+    gestorBD.limpiarColecciones(function (res) {
+        if(res == null){
+            console.log("error");
+            res.redirect("/");
+        }
+        else{
+            console.log("limpiado");
+        }
+    });
+    res.redirect('/');
+
+});
 
 app.get('/', function (req, res) {
     res.redirect('/identificarse');
 })
 
 // lanzar el servidor
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function () {
     console.log("Servidor activo");
 });

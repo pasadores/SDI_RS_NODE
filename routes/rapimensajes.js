@@ -56,8 +56,8 @@ module.exports = function (app, gestorBD) {
                console.log("Origen: " + res.usuario);
                console.log("Destino: " + req.query.user);
                var criterio = {
-                   origen : res.usuario,
-                   destino : req.query.user
+                   "origen.email" : res.usuario,
+                   "destino.email" : req.query.user
                }
                gestorBD.obtenerAmistades(criterio, function (amistades) {
                   if(amistades == null || amistades.length == 0){
@@ -81,8 +81,6 @@ module.exports = function (app, gestorBD) {
                             res.json({messages : mensajes});
                           }
                       });
-
-
                   }
                });
            }

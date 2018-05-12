@@ -8,15 +8,15 @@
     <table class="table table-striped">
         <thead>
         <tr>
-            <th>Origen</th>
-            <th>Destino</th>
+            <th>Nombre</th>
+            <th>Email</th>
         </tr>
         </thead>
         <tbody>
         {% for amistad in amistades %}
         <tr>
-            <td>{{amistad.origen}}</td>
-            <td>{{amistad.destino}}</td>
+            <td>{{amistad.destino.nombre}}</td>
+            <td>{{amistad.destino.email}}</td>
         </tr>
         {% endfor %}
         </tbody>

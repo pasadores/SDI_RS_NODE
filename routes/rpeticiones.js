@@ -19,13 +19,13 @@ module.exports = function(app, swig, gestorBD) {
                     }
                     gestorBD.insertarPerticion(peticion, function(id) {
                         if (id == null){
-                            res.redirect("/usuarios?mensaje=Error al crear la petición")
+                            res.redirect("/usuarios?mensaje=Error al crear la peticion")
                         } else {
-                            res.redirect("/usuarios?mensaje=Petición enviada");
+                            res.redirect("/usuarios?mensaje=Peticion enviada");
                         }
                     });
                 } else {
-                    res.redirect("/usuarios?mensaje= La petición ya existe");
+                    res.redirect("/usuarios?mensaje= La peticion ya existe");
                 }
             });
 

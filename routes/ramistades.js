@@ -7,24 +7,36 @@ module.exports = function(app, swig, gestorBD) {
         gestorBD.obtenerUsuarios(criterio, function (usuarios) {
               var usuario = usuarios[0];
               criterio = {
-                  _id : gestorBD.mongo.ObjectID(usuario._id)
+                  origen : usuario
               }
             gestorBD.obtenerAmistades(criterio, function(amistades) {
                 if (amistades == null || amistades.length == 0) {
-                    var amistad = {
-                        origen: usuario.email,
-                        destino: req.session.usuario
+                    criterio = {
+                        email : req.session.usuario
                     }
-                    gestorBD.insertarAmistad(amistad, function (id) {
-                        if (id == null) {
-                            res.redirect("/peticionesRecibidas?mensaje=Error al confirmar la petición");
+                    gestorBD.obtenerUsuarios(criterio, function (usuarios){
+                        if(usuarios == null || usuarios.length == 0 ){
+                            es.redirect("/peticionesRecibidas?mensaje=El receptor no existte");
                         }
-                        else {
-                            res.redirect("/peticionesRecibidas?mensaje=Solicitud de amistad confirmada");
+                        else{
+                            var receptor = usuarios[0];
+                            var amistad = {
+                                origen: usuario,
+                                destino: receptor
+                            }
+                            gestorBD.insertarAmistad(amistad, function (id) {
+                                if (id == null) {
+                                    res.redirect("/peticionesRecibidas?mensaje=Error al confirmar la peticion");
+                                }
+                                else {
+                                    res.redirect("/peticionesRecibidas?mensaje=Solicitud de amistad confirmada");
+                                }
+                            });
                         }
                     });
+
                 } else {
-                    res.redirect("/peticionesRecibidas?mensaje=Ya existe la relación de amistad");
+                    res.redirect("/peticionesRecibidas?mensaje=Ya existe la relacion de amistad");
                 }
             });
         });
@@ -33,8 +45,9 @@ module.exports = function(app, swig, gestorBD) {
 
     app.get("/amistades", function (req, res) {
         var criterio = {
-            origen: req.session.usuario,
-        };
+            "origen.email" : req.session.usuario
+        }
+        console.log(criterio);
         gestorBD.obtenerAmistades(criterio, function (amistades) {
             if (amistades == null || amistades.length == 0) {
                 var criterio = {
