@@ -1,0 +1,45 @@
+<div id="widget-mensajes">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>Emisor</th>
+            <th>Receptor</th>
+            <th>Mensaje</th>
+            <th>Leido</th>
+            <th>Fecha</th>
+
+        </tr>
+        </thead>
+        <tbody id="tablaCuerpo"/>
+    </table>
+</div>
+<script>
+    function cargarMensajes() {
+        $.ajax({
+            url: URLbase + "/mensajes/?receptor=idAmigoSeleccionado",
+            type: "GET",
+            data: {},
+            dataType: 'json',
+            headers: {"token": token},
+            success: function (mensajes) {
+                actualizarTabla(mensajes);
+            },
+            error: function (error) {
+                $("#contenedor-principal").load("widget-login.html");
+            }
+        });
+    }
+
+        function actualizarTabla(mensajesMostrar) {
+            $("#tablaCuerpo").empty(); // Vaciar la tabla
+            for (i = 0; i < mensajesMostrar.length; i++) {
+                $("#tablaCuerpo").append(
+                    "<td>" + mensajesMostrar[i].emisor +"</td>" +
+                    "<td>" + mensajesMostrar[i].destino +"</td>" +
+                    "<td>" + mensajesMostrar[i].texto + "</td>" +
+                    "<td>" + mensajesMostrar[i].leido + "</td>" +
+                    "<td>" + mensajesMostrar[i].timestamp + "</td>");
+            }
+        }
+    cargarMensajes();
+</script>

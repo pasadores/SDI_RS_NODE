@@ -14,7 +14,7 @@
     </table>
 </div>
 <script>
-    var canciones;
+    var amistades;
     function cargarAmigos(){
         $.ajax({
             url: URLbase + "/usuarios?filter=friends",
@@ -34,16 +34,22 @@
         $( "#tablaCuerpo" ).empty(); // Vaciar la tabla
         var amigo = null;
         for (i = 0; i < amigosMostrar.length; i++) {
-            amigo = amigosMostrar[i].destino;
+            amigo = amigosMostrar[i].destino
             $( "#tablaCuerpo" ).append(
                 "<tr id="+amigo._id +">"+
                 "<td>"+amigo.nombre+"</td>" +
                 "<td>"+ amigo.email + "</td>"+
-                "<a onclick=detalles('"+amigo._id+"')>Mensajes</a><br>"+
+                "<td>"+
+                "<a onclick=mensajes('"+amigo._id+"')>Mensajes</a><br>"+
                 "</td>"+
                 "</tr>" );
         }
     }
     cargarAmigos();
+
+    function mensajes(_id) {
+        idAmigoSeleccionado = _id;
+        $( "#contenedor-principal" ).load( "widget-mensajes.html");
+    }
 </script>
 
