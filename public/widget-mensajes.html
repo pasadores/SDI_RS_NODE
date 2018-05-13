@@ -12,34 +12,117 @@
         </thead>
         <tbody id="tablaCuerpo"/>
     </table>
+    <footer class="footer">
+        <div class="form-group">
+            <label class="control-label col-sm-2" for="mensaje">Envie un mensaje:</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" name="mensaje"
+                       placeholder="Cuerpo del mensaje" id="mensaje"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="button" class="btn" id="boton-enviar">Enviar</button>
+            </div>
+        </div>
+    </footer>
 </div>
 <script>
     function cargarMensajes() {
         $.ajax({
-            url: URLbase + "/mensajes/?receptor=idAmigoSeleccionado",
+            url: URLbase + "/mensajes?user=" + emailSeleccionado,
             type: "GET",
             data: {},
             dataType: 'json',
             headers: {"token": token},
             success: function (mensajes) {
-                actualizarTabla(mensajes);
+                actualizarTabla(mensajes.messages);
             },
             error: function (error) {
                 $("#contenedor-principal").load("widget-login.html");
+                clearInterval(interval);
             }
         });
     }
 
-        function actualizarTabla(mensajesMostrar) {
-            $("#tablaCuerpo").empty(); // Vaciar la tabla
-            for (i = 0; i < mensajesMostrar.length; i++) {
-                $("#tablaCuerpo").append(
-                    "<td>" + mensajesMostrar[i].emisor +"</td>" +
-                    "<td>" + mensajesMostrar[i].destino +"</td>" +
-                    "<td>" + mensajesMostrar[i].texto + "</td>" +
-                    "<td>" + mensajesMostrar[i].leido + "</td>" +
-                    "<td>" + mensajesMostrar[i].timestamp + "</td>");
-            }
+    function actualizarTabla(mensajesMostrar) {
+        mensajesMostrar.sort(function (a,b) {
+            var fechaA = new Date(a.timestamp);
+            var fechaB = new Date(b.timestamp);
+            return dates.compare(fechaA,fechaB);
+        })
+        $("#tablaCuerpo").empty(); // Vaciar la tabla
+        for (var i = 0; i < mensajesMostrar.length; i++) {
+            console.log(">" + mensajesMostrar[i]);
+            $("#tablaCuerpo").append("<tr>" +
+                "<td>" + mensajesMostrar[i].emisor + "</td>" +
+                "<td>" + mensajesMostrar[i].receptor + "</td>" +
+                "<td>" + mensajesMostrar[i].texto + "</td>" +
+                "<td>" + mensajesMostrar[i].leido + "</td>" +
+                "<td>" + mensajesMostrar[i].timestamp + "</td></tr>");
         }
+    }
+    $("#boton-enviar").click(function(){
+        $.ajax({
+            url: URLbase + "/mensajes",
+            type: "POST",
+            data: {
+                token : token,
+                destino : emailSeleccionado,
+                texto : $("#mensaje").val()
+            },
+            dataType: 'json',
+            success: function(respuesta) {
+                $("#mensaje").val("");
+                cargarMensajes();
+            },
+            error : function (error){
+                $("#widget-login" );
+
+            }
+        });
+    });
+
     cargarMensajes();
+    var interval = setInterval(function () {
+        console.log("Loading new messages");
+        cargarMensajes();
+    }, 1000);
+
+    var dates ={
+        convert:function(d) {
+            // Converts the date in d to a date-object. The input can be:
+            //   a date object: returned without modification
+            //  an array      : Interpreted as [year,month,day]. NOTE: month is 0-11.
+            //   a number     : Interpreted as number of milliseconds
+            //                  since 1 Jan 1970 (a timestamp)
+            //   a string     : Any format supported by the javascript engine, like
+            //                  "YYYY/MM/DD", "MM/DD/YYYY", "Jan 31 2009" etc.
+            //  an object     : Interpreted as an object with year, month and date
+            //                  attributes.  **NOTE** month is 0-11.
+            return (
+                d.constructor === Date ? d :
+                    d.constructor === Array ? new Date(d[0],d[1],d[2]) :
+                        d.constructor === Number ? new Date(d) :
+                            d.constructor === String ? new Date(d) :
+                                typeof d === "object" ? new Date(d.year,d.month,d.date) :
+                                    NaN
+            );
+        },
+        compare:function(a,b) {
+            // Compare two dates (could be of any type supported by the convert
+            // function above) and returns:
+            //  -1 : if a < b
+            //   0 : if a = b
+            //   1 : if a > b
+            // NaN : if a or b is an illegal date
+            // NOTE: The code inside isFinite does an assignment (=).
+            return (
+                isFinite(a=this.convert(a).valueOf()) &&
+                isFinite(b=this.convert(b).valueOf()) ?
+                    (a>b)-(a<b) :
+                    NaN
+            );
+        },
+    }
 </script>

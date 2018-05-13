@@ -14,6 +14,7 @@
     </table>
 </div>
 <script>
+    var emailSeleccionado;
     var amistades;
     function cargarAmigos(){
         $.ajax({
@@ -34,21 +35,26 @@
         $( "#tablaCuerpo" ).empty(); // Vaciar la tabla
         var amigo = null;
         for (i = 0; i < amigosMostrar.length; i++) {
-            amigo = amigosMostrar[i].destino
+            if(amigosMostrar[i].destino.email == miEmail){
+                amigo = amigosMostrar[i].origen
+            }else{
+                amigo = amigosMostrar[i].destino
+            }
+
             $( "#tablaCuerpo" ).append(
-                "<tr id="+amigo._id +">"+
+                "<tr id="+amigo.email +">"+
                 "<td>"+amigo.nombre+"</td>" +
                 "<td>"+ amigo.email + "</td>"+
                 "<td>"+
-                "<a onclick=mensajes('"+amigo._id+"')>Mensajes</a><br>"+
+                "<a onclick=mensajes('"+amigo.email+"')>Mensajes</a><br>"+
                 "</td>"+
                 "</tr>" );
         }
     }
     cargarAmigos();
 
-    function mensajes(_id) {
-        idAmigoSeleccionado = _id;
+    function mensajes(email) {
+        emailSeleccionado = email;
         $( "#contenedor-principal" ).load( "widget-mensajes.html");
     }
 </script>
