@@ -99,7 +99,7 @@ module.exports = {
     obtenerAmistades : function(criterio, funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
             if (err) {
-                funcionCallback(null)
+                funcionCallback(null);
             } else {
                 var collection = db.collection('amistades');
                 collection.find(criterio).toArray(function(err, amistades) {
@@ -170,6 +170,31 @@ module.exports = {
             }
         });
     },
+    obtenerMensajesRecibidos : function(criterio,funcionCallback) {
+        this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
+            if (err) {
+                funcionCallback(null);
+            } else {
+                var collection = db.collection('mensajes');
+                var messages = new Array();
+                var numMensajes = 0;
+                collection.find(criterio).toArray(function (err, mensajes) {
+                    if (err) {
+                        funcionCallback(numMensajes);
+                    } else {
+                        mensajes.forEach(function(mensajes){
+                            messages.push(mensajes);
+                        });
+                        numMensajes = messages.length;
+                        console.log(numMensajes);
+                        funcionCallback(numMensajes);
+                    }
+                });
+                db.close();
+            }
+        });
+    },
+
     obtenerMensajes : function(criterio, funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
             if (err) {

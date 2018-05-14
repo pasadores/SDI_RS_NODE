@@ -107,4 +107,30 @@ module.exports = function (app, gestorBD) {
        }
     });
 
+    app.get("/api/mensajesSinLeer",function (req,res) {
+        if(req.query.user != null) {
+            if (req.query.user != null) {
+                var criterio = {
+                    emisor: req.query.user,
+                    receptor: res.usuario,
+                    leido: false
+                }
+                gestorBD.obtenerMensajesRecibidos(criterio, function (mensajesSinLeer) {
+                    if (mensajesSinLeer == null) {
+                        res.status(404);
+                        res.json({error: "No ha podido contar los mensajes"});
+                    } else {
+                        res.status(200);
+                        // console.log(mensajesSinLeer.length);
+                        res.json({numMensajesSinLeer: mensajesSinLeer});
+                    }
+                });
+            }
+            else {
+                res.status(401);
+                res.json({error: "You don't have permission to get all the messages "})
+            }
+        }
+    });
+
 }

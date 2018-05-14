@@ -39,7 +39,8 @@
                 actualizarTabla(mensajes.messages);
             },
             error: function (error) {
-                $("#contenedor-principal").load("widget-login.html");
+                $("#widget-mensajes" )
+                    .prepend("<div class='alert alert-danger'>No hay mensajes con este usuario</div>");
                 clearInterval(interval);
             }
         });

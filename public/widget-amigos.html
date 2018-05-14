@@ -5,6 +5,7 @@
         <tr>
             <th>Nombre</th>
             <th>Email</th>
+            <th>Nº de mensajes</th>
             <th class="col-md-1"></th>
         </tr>
         </thead>
@@ -15,6 +16,7 @@
 </div>
 <script>
     var emailSeleccionado;
+    var numMensajesSinLeer;
     var amistades;
     function cargarAmigos(){
         $.ajax({
@@ -40,13 +42,15 @@
             }else{
                 amigo = amigosMostrar[i].destino
             }
-
+            mensajesSinLeer(amigo.email);
+            console.log(numMensajesSinLeer);
             $( "#tablaCuerpo" ).append(
-                "<tr id="+amigo.email +">"+
+                "<tr>"+
                 "<td>"+amigo.nombre+"</td>" +
                 "<td>"+ amigo.email + "</td>"+
+                "<td>"+ numMensajesSinLeer +"</td>"+
                 "<td>"+
-                "<a onclick=mensajes('"+amigo.email+"')>Mensajes</a><br>"+
+                "<a id="+amigo.email +" + onclick=mensajes('"+amigo.email+"')>Mensajes</a><br>"+
                 "</td>"+
                 "</tr>" );
         }
@@ -56,6 +60,22 @@
     function mensajes(email) {
         emailSeleccionado = email;
         $( "#contenedor-principal" ).load( "widget-mensajes.html");
+    }
+
+    function mensajesSinLeer(email){
+        $.ajax({
+            url: URLbase + "/mensajesSinLeer?user=" + email,
+            type: "GET",
+            data: { },
+            dataType: 'json',
+            headers: { "token": token },
+            success: function(respuesta) {
+                numMensajesSinLeer = respuesta.numMensajesSinLeer;
+            },
+            error : function (error){
+                $( "#contenedor-principal" ).load("widget-login.html");
+            }
+        });
     }
 </script>
 
