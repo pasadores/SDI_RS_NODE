@@ -53,6 +53,11 @@
         })
         $("#tablaCuerpo").empty(); // Vaciar la tabla
         for (var i = 0; i < mensajesMostrar.length; i++) {
+            //Si el usuario en sesión es receptor leer mensaje
+           // if(mensajesMostrar[i].emisor.email == emailSeleccionado){
+           //     console.log("!EMAIL SESIÓN!" + mensajesMostrar[i].emisor.email);
+           //     mensajesMostrar[i].leido = true;
+           // }
             console.log(">" + mensajesMostrar[i]);
             $("#tablaCuerpo").append("<tr>" +
                 "<td>" + mensajesMostrar[i].emisor + "</td>" +

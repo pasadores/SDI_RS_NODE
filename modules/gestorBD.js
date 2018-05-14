@@ -152,10 +152,28 @@ module.exports = {
             }
         });
     },
+    leerMensajes : function(criterio,funcionCallback){
+        this.mongo.connect(this.app.get('db'),function (err, db){
+            if(err){
+                funcionCallback(null);
+            }else{
+                var collection = db.collection('mensajes');
+                collection.updateMany(criterio,{ $set: { leido:true} }, function(err,result){
+                    if (err) {
+                        funcionCallback(null);
+                    } else {
+                        console.log("Mensajes leidos")
+                        funcionCallback(result);
+                    }
+                });
+                db.close();
+            }
+        });
+    },
     obtenerMensajes : function(criterio, funcionCallback){
         this.mongo.MongoClient.connect(this.app.get('db'),function (err, db) {
             if (err) {
-                funcionCallback(null)
+                funcionCallback(null);
             } else {
                 var collection = db.collection('mensajes');
                 var messages = new Array();

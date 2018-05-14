@@ -77,12 +77,28 @@ module.exports = function (app, gestorBD) {
                               res.json({ error : "no messages"});
                           }
                           else{
-                            res.status(200);
-                            res.json({messages : mensajes});
+                              // Marcar como leído
+                              var criterio = {
+                                  receptor : res.usuario
+                              }
+                              gestorBD.leerMensajes(criterio,function (mensaje)
+                              {
+                                if(mensaje == null){
+                                    res.status(404);
+                                    res.json({ error : "No hay mensajes no leídos"})
+                                }
+                                else{
+                                    res.status(200);
+                                    res.json({messages : mensajes});
+                                }
+                              });
                           }
                       });
+
                   }
+
                });
+
            }
            else{
                res.status(401);
@@ -90,4 +106,5 @@ module.exports = function (app, gestorBD) {
            }
        }
     });
+
 }
