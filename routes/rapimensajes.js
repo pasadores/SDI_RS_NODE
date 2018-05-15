@@ -81,9 +81,16 @@ module.exports = function (app, gestorBD) {
                             emisor: req.query.user,
                             receptor: res.usuario
                         }
-                        gestorBD.obtenerMensajes(criterio, function (mensajes) {
-                            res.status(200);
-                            res.json({messages: mensajes});
+                        gestorBD.leerMensajes(criterio, function (mensajes) {
+                            var criterio = {
+                                emisor: req.query.user,
+                                receptor: res.usuario
+                            }
+
+                            gestorBD.obtenerMensajes(criterio, function (mensajes) {
+                                res.status(200);
+                                res.json({messages: mensajes});
+                            });
                         });
                     }
                 });
