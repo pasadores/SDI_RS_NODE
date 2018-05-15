@@ -56,77 +56,79 @@ module.exports = function (app, gestorBD) {
         });
     });
     app.get("/api/mensajes", function (req, res) {
-        if (req.query.user != null) {
+        if(req.query.leidos == "false"){
             if (req.query.user != null) {
-                console.log("Origen: " + res.usuario);
-                console.log("Destino: " + req.query.user);
-                var criterio = {
-                    $or: [{
-                        "origen.email": res.usuario,
-                        "destino.email": req.query.user
-                    }, {
-                        "origen.email": req.query.user,
-                        "destino.email": res.usuario
-                    }]
-                }
-                gestorBD.obtenerAmistades(criterio, function (amistades) {
-                    if (amistades == null || amistades.length == 0) {
-                        res.status(404);
-                        res.json({error: "The users are not friends"})
+                if (req.query.user != null) {
+                    var criterio = {
+                        emisor: req.query.user,
+                        receptor: res.usuario,
+                        leido: false
                     }
-                    else {
-                        var messages = new Array();
-                        var empty = false;
-                        var criterio = {
-                            emisor: req.query.user,
-                            receptor: res.usuario
+                    gestorBD.obtenerMensajesRecibidos(criterio, function (mensajesSinLeer) {
+                        if (mensajesSinLeer == null) {
+                            res.status(404);
+                            res.json({error: "No ha podido contar los mensajes"});
+                        } else {
+                            res.status(200);
+                            res.json({numMensajesSinLeer: mensajesSinLeer});
                         }
-                        gestorBD.leerMensajes(criterio, function (mensajes) {
+                    });
+                }
+                else {
+                    res.status(401);
+                    res.json({error: "You don't have permission to get all the messages "})
+                }
+            }
+        }
+        else{
+            if (req.query.user != null) {
+                if (req.query.user != null) {
+                    console.log("Origen: " + res.usuario);
+                    console.log("Destino: " + req.query.user);
+                    var criterio = {
+                        $or: [{
+                            "origen.email": res.usuario,
+                            "destino.email": req.query.user
+                        }, {
+                            "origen.email": req.query.user,
+                            "destino.email": res.usuario
+                        }]
+                    }
+                    gestorBD.obtenerAmistades(criterio, function (amistades) {
+                        if (amistades == null || amistades.length == 0) {
+                            res.status(404);
+                            res.json({error: "The users are not friends"})
+                        }
+                        else {
+                            var messages = new Array();
+                            var empty = false;
                             var criterio = {
                                 emisor: req.query.user,
                                 receptor: res.usuario
                             }
+                            gestorBD.leerMensajes(criterio, function (mensajes) {
+                                var criterio = {
+                                    emisor: req.query.user,
+                                    receptor: res.usuario
+                                }
 
-                            gestorBD.obtenerMensajes(criterio, function (mensajes) {
-                                res.status(200);
-                                res.json({messages: mensajes});
+                                gestorBD.obtenerMensajes(criterio, function (mensajes) {
+                                    res.status(200);
+                                    res.json({messages: mensajes});
+                                });
                             });
-                        });
-                    }
-                });
-            }
-            else {
-                res.status(401);
-                res.json({error: "You don't have permission to get all the messages "})
-            }
-        }
-    });
-
-
-    app.get("/api/mensajesSinLeer", function (req, res) {
-        if (req.query.user != null) {
-            if (req.query.user != null) {
-                var criterio = {
-                    emisor: req.query.user,
-                    receptor: res.usuario,
-                    leido: false
+                        }
+                    });
                 }
-                gestorBD.obtenerMensajesRecibidos(criterio, function (mensajesSinLeer) {
-                    if (mensajesSinLeer == null) {
-                        res.status(404);
-                        res.json({error: "No ha podido contar los mensajes"});
-                    } else {
-                        res.status(200);
-                        // console.log(mensajesSinLeer.length);
-                        res.json({numMensajesSinLeer: mensajesSinLeer});
-                    }
-                });
-            }
-            else {
-                res.status(401);
-                res.json({error: "You don't have permission to get all the messages "})
+                else {
+                    res.status(401);
+                    res.json({error: "You don't have permission to get all the messages "})
+                }
             }
         }
+
+
     });
+
 
 }

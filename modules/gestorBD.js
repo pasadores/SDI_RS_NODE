@@ -162,7 +162,6 @@ module.exports = {
                     if (err) {
                         funcionCallback(null);
                     } else {
-                        console.log("Mensajes leidos")
                         funcionCallback(result);
                     }
                 });
@@ -186,7 +185,7 @@ module.exports = {
                             messages.push(mensajes);
                         });
                         numMensajes = messages.length;
-                        console.log(numMensajes);
+                        console.log("num: " + numMensajes);
                         funcionCallback(numMensajes);
                     }
                 });
